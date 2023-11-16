@@ -1,0 +1,53 @@
+# Archivos y directorios de Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/MavenWrapperDownloader.java
+.mvn/
+
+# Archivos y directorios de IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+*.ids
+*.orig
+*.bak
+*.swp
+*.class
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de logs
+log/
+logs/
+*.log
+
+# Archivos temporales
+tmp/
+*.tmp
+*.bak
+*.swp
+
+# Archivos de configuración local
+# application-local.yml
+# application-local.properties
+
+# Archivos de entorno
+.env
+
+# Archivos de seguridad y claves
+*.p12
+*.keystore
+*.jks
+*.cer
+*.crt
+*.key
+*.pem
+*.truststore
+
+# Otros archivos y directorios que no son necesarios para la construcción
+node_modules/
+npm-debug.log
+yarn-error.log
