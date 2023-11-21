@@ -11,11 +11,9 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,10 +44,7 @@ public class DatabaseService {
         return callableStatement;
     }
 
-    public List<Map<String, Object>> executeStoredProcedure(@NotNull StoreProcedureRequest request) throws SQLException {
-
-        System.out.println(request.getSql());
-
+    public List<Map<String, Object>> callStoreProcedureReturnList(@NotNull StoreProcedureRequest request) throws SQLException {
         List<Map<String, Object>> results = new ArrayList<>();
         try (Connection conn = dataSource.getConnection(); CallableStatement callableStatement = prepareCallableStatement(conn, request); ResultSet rs = callableStatement.executeQuery()) {
             while (rs.next()) {
@@ -70,10 +65,84 @@ public class DatabaseService {
     }
 
 
+    public Map<String, Object> callStoreProcedureReturnOne(@NotNull StoreProcedureRequest request) throws SQLException {
+
+        try (Connection conn = dataSource.getConnection(); CallableStatement callableStatement = prepareCallableStatement(conn, request); ResultSet rs = callableStatement.executeQuery()) {
+            while (rs.next()) {
+                if (request.hasIndexColumnNames()) {
+                    return ResultSetMappers.mapColumnWithList(rs, request.getIndexColumnNames());
+                } else if (request.hasPathCoulumnNames()) {
+                    return ResultSetMappers.mapColumnsWithPath(rs, request.getPathColumnNames());
+                } else {
+                    return ResultSetMappers.autoMap(rs);
+                }
+            }
+        } catch (SQLException e) {
+            var message = "Error al procesar: " + request.getSql();
+            logger.error(message, e);
+            throw new SQLException(message, e);
+        }
+
+        return null;
+    }
+
+
     public List<Map<String, Object>> callSelectList(@NotNull SqlRequest request) {
         var namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         var params = new MapSqlParameterSource(request.getParameters());
         return namedParameterJdbcTemplate.queryForList(request.getSql(), params);
+    }
+
+
+    public Map<String, Object> callSelectOne(@NotNull SqlRequest request) {
+        var namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        var params = new MapSqlParameterSource(request.getParameters());
+        return namedParameterJdbcTemplate.queryForMap(request.getSql(), params);
+    }
+
+    private PreparedStatement prepareStatement(@NotNull Connection conn, @NotNull StoreProcedureRequest request) throws SQLException {
+        SqlParameterSource namedParameters = new MapSqlParameterSource(request.getParameters());
+        ParsedSql parsedSqlObj = NamedParameterUtils.parseSqlStatement(request.getSql());
+
+        String parsedSql = NamedParameterUtils.substituteNamedParameters(parsedSqlObj, namedParameters);
+
+        Object[] values = NamedParameterUtils.buildValueArray(parsedSqlObj, namedParameters, null);
+
+        PreparedStatement stmt = conn.prepareStatement(parsedSql);
+
+        for (int i = 0; i < values.length; i++) {
+            stmt.setObject(i + 1, values[i]);
+        }
+
+        return stmt;
+    }
+
+
+    public Map<String, Object> callSqlOperationOne(@NotNull StoreProcedureRequest request) throws SQLException {
+
+        try (Connection conn = dataSource.getConnection(); PreparedStatement stmt = prepareStatement(conn, request);) {
+            stmt.execute();
+            try (var rs = stmt.getResultSet()) {
+                if (rs != null) {
+                    while (rs.next()) {
+                        if (request.hasIndexColumnNames()) {
+                            return ResultSetMappers.mapColumnWithList(rs, request.getIndexColumnNames());
+                        } else if (request.hasPathCoulumnNames()) {
+                            return ResultSetMappers.mapColumnsWithPath(rs, request.getPathColumnNames());
+                        } else {
+                            return ResultSetMappers.autoMap(rs);
+                        }
+                    }
+                }
+                Map<String, Object> result = new HashMap<>();
+                result.put("transaccion", true);
+                return result;
+            }
+        } catch (SQLException e) {
+            var message = "Error al procesar: " + request.getSql();
+            logger.error(message, e);
+            throw new SQLException(message, e);
+        }
     }
 
 }

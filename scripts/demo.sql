@@ -56,5 +56,38 @@ INSERT INTO medicos (nombre, apellidos, ruc, direccion, correo, telefono, id_ciu
 INSERT INTO medicos (nombre, apellidos, ruc, direccion, correo, telefono, id_ciudad) VALUES ('Isabel', 'Fernández', '0234567890123', 'Calle 10, Ciudad J', 'isabel.fernandez@email.com', '023-456-7890', 'C010');
 
 
+INSERT INTO medicos(nombre, apellidos, ruc, direccion, correo, telefono, id_ciudad) VALUES ('Diego', 'Condo', '010203040506070809', 'Av de las americas', 'correo@correo.com', '012-345-6789', 'C001') RETURNING *;
+
+
+
+
 ---- INSERT DEMO DATA -------
 
+---- DEMO RETURN ONE STRING ----
+drop procedure if exists fn_test_return_one_string;
+
+CREATE PROCEDURE fn_test_return_one_string()
+    RETURNING varchar(50);
+
+RETURN 'Prueba de unico texto';
+
+END PROCEDURE;
+
+
+EXECUTE PROCEDURE fn_test_return_one_string();
+
+---- DEMO RETURN ONE STRING ----
+
+---- DEMO RETURN ONE NUMBER ----
+
+drop procedure if exists fn_test_return_one_number;
+
+CREATE PROCEDURE fn_test_return_one_number(numero NUMERIC)
+    RETURNING INT;
+
+RETURN numero * 2.1;
+
+END PROCEDURE;
+
+
+EXECUTE PROCEDURE fn_test_return_one_number();

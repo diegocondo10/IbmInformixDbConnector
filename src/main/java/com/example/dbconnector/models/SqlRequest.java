@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SqlRequest{
+public class SqlRequest {
 
     @NotEmpty
     private String sql;

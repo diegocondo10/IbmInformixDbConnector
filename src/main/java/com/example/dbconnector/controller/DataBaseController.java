@@ -26,19 +26,29 @@ public class DataBaseController {
         this.databaseService = databaseService;
     }
 
-    @PostMapping("/store-procedure/list")
+    @PostMapping("/sp/list")
     public ResponseEntity<List<Map<String, Object>>> callStoreProcedureList(@Valid @RequestBody StoreProcedureRequest request) throws SQLException {
-        return ResponseEntity.ok(databaseService.executeStoredProcedure(request));
+        return ResponseEntity.ok(databaseService.callStoreProcedureReturnList(request));
     }
 
-    @PostMapping("/store-procedure/one")
-    public ResponseEntity<List<Map<String, Object>>> callStoreProcedureOne(@Valid @RequestBody StoreProcedureRequest request) throws SQLException {
-        return ResponseEntity.ok(databaseService.executeStoredProcedure(request));
+    @PostMapping("/sp/one")
+    public ResponseEntity<Map<String, Object>> callStoreProcedureOne(@Valid @RequestBody StoreProcedureRequest request) throws SQLException {
+        return ResponseEntity.ok(databaseService.callStoreProcedureReturnOne(request));
     }
 
-    @PostMapping("/sql-operation/list")
+    @PostMapping("/select/list")
     public ResponseEntity<List<Map<String, Object>>> callSelectList(@Valid @RequestBody SqlRequest request) {
         return ResponseEntity.ok(databaseService.callSelectList(request));
+    }
+
+    @PostMapping("/select/one")
+    public ResponseEntity<Map<String, Object>> callSelectOne(@Valid @RequestBody SqlRequest request) {
+        return ResponseEntity.ok(databaseService.callSelectOne(request));
+    }
+
+    @PostMapping("/sql-op/one")
+    public ResponseEntity<Map<String, Object>> callSqlOperationOne(@Valid @RequestBody StoreProcedureRequest request) throws SQLException {
+        return ResponseEntity.ok(databaseService.callSqlOperationOne(request));
     }
 
 }
