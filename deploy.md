@@ -55,7 +55,7 @@
     ```
 4. Configuramos el servicio en nuestro sistema copiando el archivo springbootapp.service
     ```
-    sudo mv springbootapp.service /etc/systemd/system/
+    sudo cp springbootapp.service /etc/systemd/system/
     ```
 5. Damos permisos al arcchivo anteriormente copiado
     ```
