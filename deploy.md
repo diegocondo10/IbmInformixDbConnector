@@ -48,22 +48,14 @@
     chmod +x mvnw
     ./mvnw clean package
     ```
-3. Configuramos el servicio en nuestro sistema
+3. Creamos un usuario para ejecutar la aplicacion
     ```
-    sudo nano /etc/systemd/system/springbootapp.service
+    sudo adduser springbootapp
+    sudo su - springbootapp
     ```
-    Añadimos lo siguiente en este archivo generado por nano
+4. Configuramos el servicio en nuestro sistema copiando el archivo springbootapp.service
     ```
-    [Unit]
-    Description=Spring Boot Application
-
-    [Service]
-    User=springbootapp
-    ExecStart=/usr/bin/java -jar /home/IbmInformixDbConnector/tu-aplicacion.jar
-    Restart=always
-
-    [Install]
-    WantedBy=multi-user.target
+    sudo mv springbootapp.service /etc/systemd/system/
     ```
 
 
