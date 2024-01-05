@@ -57,13 +57,27 @@
     ```
     sudo mv springbootapp.service /etc/systemd/system/
     ```
-
-
-
-
-
-
-
+5. Damos permisos al arcchivo anteriormente copiado
+    ```
+    sudo chown root:root /etc/systemd/system/springbootapp.service
+    sudo chmod 644 /etc/systemd/system/springbootapp.service
+    ```
+6. Recargar systemd para que reconozca el nuevo servicio:
+    ```
+    sudo systemctl daemon-reload
+    ```
+7. Habilitar el servicio para que se inicie en el arranque:
+    ```
+    sudo systemctl enable springbootapp
+    ```
+8. Iniciar el servicio:
+    ```
+    sudo systemctl start springbootapp
+    ```
+9. Verificar el estado del servicio:
+    ```
+    sudo systemctl status springbootapp
+    ```
 
 
 
