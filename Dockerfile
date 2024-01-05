@@ -15,3 +15,5 @@ ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /ap
 
 # docker tag ibm-informix-db-connector:latest libelulasoft/ibm-informix-db-connector:latest
 # docker push libelulasoft/ibm-informix-db-connector:latest
+
+# comentario de prueba
